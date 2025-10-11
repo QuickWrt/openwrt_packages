@@ -1,4 +1,4 @@
-name: T9 Build
+name: Build Packages
 
 on:
   workflow_dispatch:
