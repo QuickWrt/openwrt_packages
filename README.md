@@ -1,1 +1,1 @@
-<img src="https://avatars.githubusercontent.com/u/233540802?s=200&v=4" alt="logo" width="120">
+<img src="https://git.kejizero.online/zhao/image/raw/branch/main/logo.png" alt="logo" width="120">
