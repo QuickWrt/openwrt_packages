@@ -1,0 +1,101 @@
+msgid "CPU usage"
+msgstr "CPU 使用率"
+
+msgid "Confirm Reboot"
+msgstr "确认重启"
+
+msgid "Are you sure you want to reboot the system?"
+msgstr "你确认要重启系统？"
+
+msgid "Confirm"
+msgstr "确认"
+
+msgid "Login"
+msgstr "登录"
+
+msgid "Logout"
+msgstr "退出"
+
+msgid "Base Setting"
+msgstr "基本设置"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "NAS"
+msgstr "网络存储"
+
+msgid "NFtables Firewall"
+msgstr "NFtables 防火墙"
+
+msgid "IPtables Firewall"
+msgstr "IPtables 防火墙"
+
+msgid "Refresh interval"
+msgstr "刷新间隔"
+
+msgid "Refresh interval in seconds"
+msgstr "刷新间隔（以秒为单位）"
+
+msgid "Use as docker root directory (/opt)"
+msgstr "作为 docker 根目录使用（/opt）"
+
+msgid "Full Cone NAT"
+msgstr "全锥形 NAT"
+
+msgid "Full Cone NAT6"
+msgstr "全锥形 NAT6"
+
+msgid "Disable"
+msgstr "禁用"
+
+msgid "Nftables Fullcone nat"
+msgstr "Nftables 全锥形 NAT"
+
+msgid "Nftables based fullcone nat scheme."
+msgstr "基于 Nftables 的全锥形 NAT 方案。"
+
+msgid "Broadcom Fullcone nat"
+msgstr "Broadcom 全锥形 NAT"
+
+msgid "Broadcom based fullcone nat scheme."
+msgstr "基于博通的全锥型 NAT 方案。"
+
+msgid "IPv6 NAT"
+msgstr "IPv6 网络地址转换（NAT6）"
+
+msgid "Applicable to internet environments where the router is not assigned an IPv6 prefix, such as when using an upstream optical modem for dial-up."
+msgstr "适用于没有给路由分配 IPv6 前缀的上网环境，例如：上级光猫拨号"
+
+msgid "Shortcut-FE flow offloading"
+msgstr "Shortcut-FE 流量卸载"
+
+msgid "Shortcut-FE based offloading for routing/NAT"
+msgstr "基于 Shortcut-FE 的 路由/NAT 卸载"
+
+msgid "Connection Manager"
+msgstr "连接管理器"
+
+msgid "Set up the Shortcut-FE engine connection manager"
+msgstr "设置 Shortcut-FE 引擎连接管理器"
+
+msgid "Natflow offloading"
+msgstr "Natflow 流量卸载"
+
+msgid "Natflow based offloading for routing/NAT"
+msgstr "基于 Natflow 的 路由/NAT 卸载"
+
+msgid "Natflow delay packet"
+msgstr "Natflow 延迟数据包"
+
+msgid "Set up the natflow delay packet"
+msgstr "设置 Natflow 延迟数据包"
+
+msgid "Custom rules allow you to execute arbitrary nft commands which are not otherwise covered by the firewall framework. The rules are executed after each firewall restart, right after the default ruleset has been loaded."
+msgstr "自定义规则允许您执行不属于防火墙框架的任意 nft 命令。每次重启防火墙时，这些命令在默认的规则运行后立即执行。"
+
+msgid "Max preferred lifetime"
+msgstr "前缀优先时间上限"
+
+msgid "Max valid lifetime"
+msgstr "前缀有效时间上限"
