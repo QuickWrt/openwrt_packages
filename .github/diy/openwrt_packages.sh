@@ -36,6 +36,7 @@ git clone --depth 1 -b main https://github.com/sbwml/package_new_ftp
 git clone --depth 1 -b js https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 git clone --depth 1 -b lua https://github.com/sirpdboy/luci-app-adguardhome openwrt-adguardhome && mv -n openwrt-adguardhome/luci-app-adguardhome ./ && rm -rf openwrt-adguardhome
+sed -i "s/\(option enabled '\)1'/\10'/" luci-app-adguardhome/root/etc/config/AdGuardHome
 git clone --depth 1 -b master https://github.com/sbwml/luci-app-mentohust openwrt-mentohust && mv -n openwrt-mentohust/{luci-app-mentohust,mentohust} ./ && rm -rf openwrt-mentohust
 git clone --depth 1 -b main https://github.com/gdy666/luci-app-lucky openwrt-lucky && mv -n openwrt-lucky/{luci-app-lucky,lucky} ./ && rm -rf openwrt-lucky
 git clone --depth 1 -b master https://github.com/linkease/nas-packages && mv -n nas-packages/multimedia/ffmpeg-remux ./ && rm -rf nas-packages
