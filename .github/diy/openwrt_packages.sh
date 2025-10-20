@@ -37,6 +37,10 @@ git clone --depth 1 -b js https://github.com/UnblockNeteaseMusic/luci-app-unbloc
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 git clone --depth 1 -b master https://github.com/sbwml/luci-app-mentohust openwrt-mentohust && mv -n openwrt-mentohust/{luci-app-mentohust,mentohust} ./ && rm -rf openwrt-mentohust
 git clone --depth 1 -b main https://github.com/gdy666/luci-app-lucky openwrt-lucky && mv -n openwrt-lucky/{luci-app-lucky,lucky} ./ && rm -rf openwrt-lucky
+git clone --depth 1 -b master https://github.com/linkease/nas-packages && mv -n nas-packages/multimedia/ffmpeg-remux ./ && rm -rf nas-packages
+git clone --depth 1 -b master https://github.com/linkease/nas-packages && mv -n nas-packages/network/services/* ./ && rm -rf nas-packages
+git clone --depth 1 -b main https://github.com/linkease/nas-packages-luci nas-luci && mv -n nas-luci/luci/* ./ && rm -rf nas-luci
+git clone --depth 1 -b main https://github.com/linkease/istore && mv -n istore/luci/* ./ && rm -rf istore
 
 sed -i \
 -e 's?include \.\./\.\./\(lang\|devel\)?include $(TOPDIR)/feeds/packages/\1?' \
