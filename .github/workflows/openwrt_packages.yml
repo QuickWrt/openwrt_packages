@@ -7,7 +7,7 @@ on:
 
 jobs:
   job_openwrt_packages:
-    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id
+    if: github.actor == 'OPPEN321'
     runs-on: ubuntu-latest
 
     name: Update openwrt_packages
