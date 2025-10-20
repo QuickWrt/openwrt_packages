@@ -1,0 +1,56 @@
+name: Build OpenWrt Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build ${{ matrix.arch }}-${{ matrix.sdk }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - 24.10.3
+        arch:
+          - aarch64_cortex-a53
+          - aarch64_generic
+          - x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: kenzok8/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
+          FEEDNAME: packages_ci
+          PACKAGES: luci-theme-argon luci-theme-kucat luci-app-ramfree luci-app-quickstart luci-app-quickfile luci-app-qbittorrent luci-app-partexp luci-app-openlist2 luci-app-netspeedtest luci-app-mosdns luci-app-mentohust luci-app-lucky luci-app-linkease luci-app-kucat-config luci-app-istorex luci-app-istoreenhance luci-app-floatip luci-app-ddnsto luci-app-bandix luci-app-argon-config luci-app-airplay2 luci-app-airconnect luci-app-socat luci-app-store luci-app-unblockneteasemusic luci-app-unishare luci-app-usb-printer luci-app-webdav luci-app-wolplus luci-lib-iform luci-lib-taskd luci-lib-xterm luci-nginxer lucky mentohust mosdns openlist2 bandix ftp qbittorrent qt6base qt6tools quickfile quickstart rblibtorrent speedtest-cli taskd unishare v2dat webdav2 airconnect airplay2 ddnsto floatip istoreenhance linkease linkmount 
+          NO_REFRESH_CHECK: true
+          IGNORE_ERRORS: true
+
+      - name: Artifact packages
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.arch }}-${{ matrix.sdk }}
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          
+      - name: Zip packages
+        run: |
+          zip -j ${{ matrix.arch }}-${{ matrix.sdk }}.zip bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          echo -e "## 📅 更新计划\n" > release.txt
+          echo -e "- 🕒 每日自动检测上游更新\n" >> release.txt
+          echo -e "- 🔄 如有变动则自动触发同步推送\n" >> release.txt
+          echo -e "- 📬 保持与上游仓库的版本一致性\n" >> release.txt
+
+      - name: Upload packages
+        uses: ncipollo/release-action@main
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          artifacts: "${{ matrix.arch }}-${{ matrix.sdk }}.zip,bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"
+          allowUpdates: true
+          replacesArtifacts: true
+          bodyFile: "release.txt"
+          tag: ${{ github.run_number }}-${{ matrix.arch }}
