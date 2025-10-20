@@ -579,9 +579,25 @@ function isDarkMode() {
     // 如果是 argon 主题，检查 argon 配置
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
         var argonMode = uci.get('argon', '@global[0]', 'mode');
-        if (argonMode && argonMode.toLowerCase().includes('dark')) {
-            return true;
+        if (argonMode) {
+            if (argonMode.toLowerCase() === 'dark') {
+                return true;
+            } else if (argonMode.toLowerCase() === 'light') {
+                return false;
+            }
+            // 如果是 'normal' 或 'auto'，使用浏览器检测系统颜色偏好
+            if (argonMode.toLowerCase() === 'normal' || argonMode.toLowerCase() === 'auto') {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return true;
+                }
+                return false;
+            }
         }
+    }
+    
+    // 默认情况下也使用浏览器检测系统颜色偏好
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return true;
     }
     
     return false;
@@ -653,6 +669,24 @@ function parseSpeed(speedStr) {
     }
 
     return 0;
+}
+
+// 过滤 LAN IPv6 地址（排除本地链路地址）
+function filterLanIPv6(ipv6Addresses) {
+    if (!ipv6Addresses || !Array.isArray(ipv6Addresses)) return [];
+    
+    const lanPrefixes = [
+        'fd',     // ULA
+        'fc'      // ULA
+    ];
+    
+    const lanAddresses = ipv6Addresses.filter(addr => {
+        const lowerAddr = addr.toLowerCase();
+        return lanPrefixes.some(prefix => lowerAddr.startsWith(prefix));
+    });
+    
+    // 最多返回 2 个 LAN IPv6 地址
+    return lanAddresses.slice(0, 2);
 }
 
 var callStatus = rpc.declare({
@@ -804,27 +838,27 @@ return view.extend({
             
             .bandix-table th:nth-child(1),
             .bandix-table td:nth-child(1) {
-                width: 20%;
+                width: 25%;
             }
             
             .bandix-table th:nth-child(2),
             .bandix-table td:nth-child(2) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(3),
             .bandix-table td:nth-child(3) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(4),
             .bandix-table td:nth-child(4) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(5),
             .bandix-table td:nth-child(5) {
-                width: 20%;
+                width: 9%;
             }
 
 			/* 类型联动的高亮与弱化 */
@@ -864,6 +898,12 @@ return view.extend({
             .device-ip {
                 color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 font-size: 0.875rem;
+            }
+            
+            .device-ipv6 {
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                font-size: 0.75rem;
+                font-family: monospace;
             }
             
             .device-mac {
@@ -1355,7 +1395,18 @@ return view.extend({
             // 主要内容卡片
             E('div', { 'class': 'bandix-card' }, [
                 E('div', { 'id': 'traffic-status' }, [
-                    E('div', { 'class': 'loading' }, getTranslation('正在加载数据...', language))
+                    E('table', { 'class': 'bandix-table' }, [
+                        E('thead', {}, [
+                            E('tr', {}, [
+                                E('th', {}, getTranslation('设备信息', language)),
+                                E('th', {}, getTranslation('LAN 流量', language)),
+                                E('th', {}, getTranslation('WAN 流量', language)),
+                                E('th', {}, getTranslation('限速设置', language)),
+                                E('th', {}, getTranslation('操作', language))
+                            ])
+                        ]),
+                        E('tbody', {})
+                    ])
                 ])
             ])
         ]);
@@ -1408,7 +1459,7 @@ return view.extend({
             currentDevice = device;
             var modal = document.getElementById('rate-limit-modal');
             var deviceSummary = document.getElementById('modal-device-summary');
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 动态填充单位选择器
             var uploadUnitSelect = document.getElementById('upload-limit-unit');
@@ -1553,7 +1604,7 @@ return view.extend({
 
             var uploadLimit = 0;
             var downloadLimit = 0;
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 获取hostname值
             var newHostname = document.getElementById('device-hostname-input').value.trim();
@@ -1784,7 +1835,7 @@ return view.extend({
                 downSeries = downSeries.slice(startIdx, endIdx);
             }
 
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
             var maxVal = 0;
             for (var i = 0; i < upSeries.length; i++) maxVal = Math.max(maxVal, upSeries[i] || 0);
             for (var j = 0; j < downSeries.length; j++) maxVal = Math.max(maxVal, downSeries[j] || 0);
@@ -1958,7 +2009,7 @@ return view.extend({
 			var zh = (language === 'zh-cn' || language === 'zh-tw');
 			var typeSel = (typeof document !== 'undefined' ? document.getElementById('history-type-select') : null);
 			var selType = (typeSel && typeSel.value) ? typeSel.value : 'total';
-			var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+			var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
 			function row(label, val) {
 				lines.push('<div class="ht-row"><span class="ht-key">' + label + '</span><span class="ht-val">' + val + '</span></div>');
@@ -1999,7 +2050,12 @@ return view.extend({
 				if (macVal && Array.isArray(latestDevices)) {
 					var dev = latestDevices.find(function(d){ return d.mac === macVal; });
 					if (dev) {
-						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '');
+						var ipv6Info = '';
+						var lanIPv6 = filterLanIPv6(dev.ipv6_addresses);
+						if (lanIPv6.length > 0) {
+							ipv6Info = ' | IPv6: ' + lanIPv6.join(', ');
+						}
+						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '') + ipv6Info;
 						lines.push('<div class="ht-device">' + getTranslation('设备', language) + ': ' + devLabel + '</div>');
 					}
 				}
@@ -2065,7 +2121,7 @@ function isDeviceOnline(device) {
     var timeDiff = currentTime - lastOnlineTime;
     
     // 从UCI配置获取离线超时时间（秒），默认10分钟
-    var offlineTimeoutSeconds = uci.get('bandix', 'general', 'offline_timeout') || 600;
+    var offlineTimeoutSeconds = uci.get('bandix', 'traffic', 'offline_timeout') || 600;
     var offlineThreshold = offlineTimeoutSeconds * 1000; // 转换为毫秒
     
     return timeDiff <= offlineThreshold;
@@ -2427,8 +2483,8 @@ function formatRetentionSeconds(seconds, language) {
 
 
 
-        // 轮询获取数据
-        poll.add(function () {
+        // 定义更新设备数据的函数
+        function updateDeviceData() {
             return callStatus().then(function (result) {
                 var trafficDiv = document.getElementById('traffic-status');
                 var deviceCountDiv = document.getElementById('device-count');
@@ -2437,7 +2493,7 @@ function formatRetentionSeconds(seconds, language) {
                 if (!language || language === 'auto') {
                     language = getSystemLanguage();
                 }
-                var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+                var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
                 var stats = result;
                 if (!stats || !stats.devices) {
@@ -2611,6 +2667,17 @@ function formatRetentionSeconds(seconds, language) {
                                     device.hostname || '-'
                                 ]),
                                 E('div', { 'class': 'device-ip' }, device.ip),
+                                (function() {
+                                    var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
+                                    if (lanIPv6.length > 0) {
+                                        var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
+                                        return E('div', { 
+                                            'class': 'device-ipv6',
+                                            'title': allIPv6
+                                        }, lanIPv6.join(', '));
+                                    }
+                                    return E('div', { 'class': 'device-ipv6' }, '-');
+                                })(),
                                 E('div', { 'class': 'device-mac' }, device.mac),
                                 E('div', { 'class': 'device-last-online' }, [
                                     E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
@@ -2692,7 +2759,13 @@ function formatRetentionSeconds(seconds, language) {
                     updateDeviceOptions(latestDevices);
                 } catch (e) {}
             });
-        }, 1);
+        }
+
+        // 轮询获取数据
+        poll.add(updateDeviceData, 1);
+
+        // 立即执行一次，不等待轮询
+        updateDeviceData();
 
         return view;
     }
