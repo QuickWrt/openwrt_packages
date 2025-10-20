@@ -1,4 +1,4 @@
-name: "openwrt_packages"
+name: Sync QuickWrt Packages
 
 on:
   workflow_dispatch:
