@@ -21,7 +21,6 @@ git clone --depth 1 -b main https://github.com/sbwml/luci-app-airplay2 openwrt-a
 git clone --depth 1 -b master https://github.com/sbwml/luci-app-qbittorrent openwrt-qbittorrent && mv -n openwrt-qbittorrent/{qbittorrent,qt6base,qt6tools,rblibtorrent,luci-app-qbittorrent} ./ && rm -rf openwrt-qbittorrent
 git clone --depth 1 -b openwrt-24.10 https://github.com/sbwml/autocore-arm
 git clone --depth 1 -b main https://github.com/sbwml/openwrt_pkgs && mv -n openwrt_pkgs/{bash-completion,ddns-scripts-aliyun,luci-app-cpufreq,luci-app-ramfree,fw_download_tool,luci-app-socat,luci-app-ota,luci-app-usb-printer,luci-app-wolplus,luci-app-netspeedtest,speedtest-cli} ./ && rm -rf openwrt_pkgs
-git clone --depth 1 -b lua https://git.kejizero.online/zhao/luci-app-adguardhome
 git clone --depth 1 -b js https://github.com/sirpdboy/luci-theme-kucat openwrt-kucat && mv -n openwrt-kucat/luci-theme-kucat ./ && rm -rf openwrt-kucat
 git clone --depth 1 -b main https://github.com/sirpdboy/luci-app-kucat-config
 git clone --depth 1 -b main https://github.com/sirpdboy/luci-app-partexp openwrt-partexp && mv -n openwrt-partexp/luci-app-partexp ./ && rm -rf openwrt-partexp
