@@ -42,10 +42,11 @@ echo "src-git quickwrt_packages https://github.com/QuickWrt/openwrt_packages" >>
 以下为主要同步来源：
 | 类型     | 仓库                                                                | 说明                      |
 | ------ | ----------------------------------------------------------------- | ----------------------- |
-| 官方包    | [openwrt/packages](https://github.com/openwrt/packages)           | 官方维护的软件包集合              |
-| LuCI   | [openwrt/luci](https://github.com/openwrt/luci)                   | 官方 Web 界面组件             |
-| 社区插件   | [coolsnowwolf/packages](https://github.com/coolsnowwolf/packages) | Lede 项目插件               |
-| NAS 应用 | [linkease/nas-packages](https://github.com/linkease/nas-packages) | LinkEase 团队维护的 NAS 相关插件 |
+| 科学插件   | [sbwml/openwrt_helloworld](https://github.com/sbwml/openwrt_helloworld)           | 由 sbwml 维护的 openwrt_helloworld 项目           |
+| 易有云团队  | [linkease/nas-packages-luci](https://github.com/linkease/nas-packages-luci)                   | 由易有云团队维护的 NAS 相关插件           |
+| argon 主题   | [jerrykuku/luci-theme-argon](https://github.com/jerrykuku/luci-theme-argon) | Argon 是一款干净整洁的 OpenWrt LuCI 主题               |
+| kucat 主题 | [sirpdboy/luci-theme-kucat](https://github.com/sirpdboy/luci-theme-kucat) | kucat 酷猫主题以酷为美，因动而生。 带5种快捷键的工具栏 |
+
 
 ## 📅 更新计划
 
