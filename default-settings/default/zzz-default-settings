@@ -1,16 +1,14 @@
 #!/bin/sh
 
+# ota
+OTA_URL="https://api.kejizero.xyz/openwrt/ota.json"
+
 # theme
 if [ -d "/www/luci-static/argon" ] && [ -z "$(uci -q get luci.main.pollinterval)" ]; then
     uci set luci.main.mediaurlbase='/luci-static/argon'
     uci set luci.main.pollinterval='3'
     uci commit luci
 fi
-
-# irqbalance
-uci set irqbalance.irqbalance.enabled='0'
-uci commit irqbalance
-service irqbalance stop
 
 # ttyd
 uci set ttyd.@ttyd[0].command='/bin/login -f root'
@@ -61,9 +59,61 @@ fi
 sed -i 's/root::0:0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
 
+devices_setup()
+{
+    case "$(board_name)" in
+    armsom,sige3|\
+    armsom,sige7|\
+    sinovoip,bpi-r2-pro|\
+    friendlyarm,nanopc-t4|\
+    friendlyarm,nanopc-t6|\
+    friendlyarm,nanopi-r2c|\
+    friendlyarm,nanopi-r2c-plus|\
+    friendlyarm,nanopi-r2s|\
+    friendlyarm,nanopi-r3s|\
+    friendlyarm,nanopi-r4s|\
+    friendlyarm,nanopi-r4se|\
+    friendlyarm,nanopi-r5c|\
+    friendlyarm,nanopi-r5s|\
+    friendlyarm,nanopi-r6c|\
+    friendlyarm,nanopi-r6s|\
+    huake,guangmiao-g4c|\
+    fastrhino,r6xs|\
+    hinlink,opc-h6xk|\
+    radxa,rock-5a|\
+    radxa,rock-5b|\
+    xunlong,orangepi-5|\
+    xunlong,orangepi-5-plus)
+        uci set irqbalance.irqbalance.enabled='0'
+        uci commit irqbalance
+        service irqbalance stop
+        [ ! -d "/usr/share/openwrt_core" ] && {
+            sed -i '/openwrt_core/d' /etc/opkg/distfeeds.conf
+            openwrt_core="openwrt_core/aarch64_generic"
+            sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
+        }
+        uci set ota.config.api_url="$OTA_URL"
+        uci commit ota
+        ;;
+    x86_64)
+        [ $(uname -r | awk -F. '{print $1}') = 6 ] && {
+            [ -f /sys/kernel/btf/vmlinux ] && [ ! -d "/usr/share/openwrt_core" ] && {
+                openwrt_core="openwrt_core/x86_64"
+                sed -i '/openwrt_core/d' /etc/opkg/distfeeds.conf
+                sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
+            }
+        }
+        uci set ota.config.api_url="$OTA_URL"
+        uci commit ota
+        ;;
+    esac
+}
+
+# opkg mirror
+sed -i 's,downloads.openwrt.org,mirrors.aliyun.com/openwrt,g' /etc/opkg/distfeeds.conf
+
 # extra packages
-echo "src/gz openwrt_extras https://opkg.kejizero.online/openwrt-24.10/$(. /etc/openwrt_release ; echo $DISTRIB_ARCH)" >> /etc/opkg/distfeeds.conf
-opkg-key add /root/key-build.pub
+echo "src/gz openwrt_extras https://opkg.kejizero.xyz/openwrt-24.10/$(. /etc/openwrt_release ; echo $DISTRIB_ARCH)" >> /etc/opkg/distfeeds.conf
 
 # nginx
 uci set nginx.global.uci_enable='true'
