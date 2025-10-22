@@ -1,6 +1,6 @@
 # 🌀 QuickWrt OpenWrt Packages
 
-<img src="https://git.kejizero.online/zhao/image/raw/branch/main/logo.png" alt="OpenWrt Logo" width="120" align="right">
+<img src="https://avatars.githubusercontent.com/u/233540802?s=200&v=4" alt="OpenWrt Logo" width="120" align="right">
 
 本仓库用于 **同步上游 OpenWrt 插件（packages）** 到 [QuickWrt](https://github.com/QuickWrt) 的私有构建环境中，方便在本地或云端构建时统一依赖源、保持插件版本一致性。
 
