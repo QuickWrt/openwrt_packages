@@ -1,5 +1,10 @@
 #!/bin/sh
 
+. /etc/os-release
+. /lib/functions/uci-defaults.sh
+
+[ $(uname -m) = "x86_64" ] && alias board_name="echo x86_64"
+
 # ota
 OTA_URL="https://api.kejizero.xyz/openwrt/ota.json"
 
