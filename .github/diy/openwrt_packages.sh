@@ -43,7 +43,7 @@ git clone --depth 1 -b master https://github.com/linkease/nas-packages && mv -n 
 git clone --depth 1 -b main https://github.com/linkease/nas-packages-luci nas-luci && mv -n nas-luci/luci/* ./ && rm -rf nas-luci
 git clone --depth 1 -b main https://github.com/linkease/istore && mv -n istore/luci/* ./ && rm -rf istore
 git clone --depth 1 -b main https://github.com/jjm2473/openwrt-apps && mv -n openwrt-apps/luci-app-fan ./ && rm -rf openwrt-apps
-git clone --depth 1 -b main https://github.com/jjm2473/openwrt-third && mv -n openwrt-third/luci-app-nfs ./ && rm -rf openwrt-third
+git clone --depth 1 -b main https://github.com/jjm2473/openwrt-third && mv -n openwrt-third/{luci-app-nfs,luci-app-cifs-mount} ./ && rm -rf openwrt-third
 git clone --depth 1 -b v5 https://github.com/sbwml/openwrt_helloworld && mv -n openwrt_helloworld/{chinadns-ng,dns2socks-rust,dns2socks,dns2tcp,geoview,hysteria,ipt2socks,lua-neturl,luci-app-homeproxy,luci-app-nikki,luci-app-openclash,luci-app-passwall,luci-app-passwall2,luci-app-ssr-plus,microsocks,naiveproxy,nikki,pdnsd,redsocks2,shadow-tls,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,sing-box,tcping,trojan-plus,trojan,tuic-client,v2ray-core,v2ray-geodata,v2ray-plugin,xray-core,xray-plugin} ./ && rm -rf openwrt_helloworld
 git clone --depth 1 -b master https://github.com/QiuSimons/luci-app-daed openwrt-dae && mv -n openwrt-dae/{luci-app-daed,daed} ./ && rm -rf openwrt-dae
 mkdir -p libcron && wget -O libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
