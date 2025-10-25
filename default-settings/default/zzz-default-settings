@@ -5,9 +5,6 @@
 
 [ $(uname -m) = "x86_64" ] && alias board_name="echo x86_64"
 
-# ota
-OTA_URL="https://api.kejizero.xyz/openwrt/ota.json"
-
 # theme
 if [ -d "/www/luci-static/argon" ] && [ -z "$(uci -q get luci.main.pollinterval)" ]; then
     uci set luci.main.mediaurlbase='/luci-static/argon'
@@ -97,7 +94,7 @@ devices_setup()
             openwrt_core="openwrt_core/aarch64_generic"
             sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
         }
-        uci set ota.config.api_url="$OTA_URL"
+        uci set ota.config.api_url="https://api.kejizero.xyz/openwrt/rockchip.json"
         uci commit ota
         ;;
     x86_64)
@@ -108,7 +105,7 @@ devices_setup()
                 sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
             }
         }
-        uci set ota.config.api_url="$OTA_URL"
+        uci set ota.config.api_url="https://api.kejizero.xyz/openwrt/x86_64.json"
         uci commit ota
         ;;
     esac
