@@ -79,9 +79,10 @@ devices_setup()
     friendlyarm,nanopi-r5s|\
     friendlyarm,nanopi-r6c|\
     friendlyarm,nanopi-r6s|\
+    friendlyarm,nanopi-r76s|\
     huake,guangmiao-g4c|\
-    fastrhino,r6xs|\
-    hinlink,opc-h6xk|\
+    fastrhino,r66s|\
+    fastrhino,r68s|\
     radxa,rock-5a|\
     radxa,rock-5b|\
     xunlong,orangepi-5|\
@@ -91,8 +92,7 @@ devices_setup()
         service irqbalance stop
         [ ! -d "/usr/share/openwrt_core" ] && {
             sed -i '/openwrt_core/d' /etc/opkg/distfeeds.conf
-            openwrt_core="openwrt_core/aarch64_generic"
-            sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
+            sed -i "\$a\src/gz openwrt_core https://core.kejizero.xyz/aarch64_generic/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
         }
         uci set ota.config.api_url="https://api.kejizero.xyz/openwrt/rockchip.json"
         uci commit ota
@@ -100,9 +100,8 @@ devices_setup()
     x86_64)
         [ $(uname -r | awk -F. '{print $1}') = 6 ] && {
             [ -f /sys/kernel/btf/vmlinux ] && [ ! -d "/usr/share/openwrt_core" ] && {
-                openwrt_core="openwrt_core/x86_64"
                 sed -i '/openwrt_core/d' /etc/opkg/distfeeds.conf
-                sed -i "\$a\src/gz openwrt_core https://raw.githubusercontent.com/QuickWrt/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
+                sed -i "\$a\src/gz openwrt_core https://core.kejizero.xyz/x86_64/${openwrt_core}/$(grep Version /usr/lib/opkg/info/kernel.control | awk '{print $2}')" /etc/opkg/distfeeds.conf
             }
         }
         uci set ota.config.api_url="https://api.kejizero.xyz/openwrt/x86_64.json"
