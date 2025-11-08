@@ -29,12 +29,10 @@ jobs:
           sudo timedatectl set-timezone "Asia/Shanghai"
 
       - name: Free disk space
-        if: steps.detect.outputs.pkgs != ''
         run: |
           sudo rm -rf /usr/lib/{jvm,llvm} /usr/local /usr/src/* /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm} /usr/libexec/gcc/x86_64-linux-gnu/14 /usr/lib/x86_64-linux-gnu/{*clang*,*LLVM*} /home/linuxbrew
 
       - name: Build Packages
-        if: steps.detect.outputs.pkgs != ''
         uses: sbwml/openwrt-gh-action-sdk@helloworld
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
@@ -59,7 +57,7 @@ jobs:
           
       - name: Zip packages
         run: |
-          zip -j ${{ matrix.arch }}-${{ matrix.sdk }}.zip bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          zip -j ${{ matrix.arch }}-${{ matrix.tag }}.zip bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
           echo -e "## 📅 更新计划\n" > release.txt
           echo -e "- 🕒 每日自动检测上游更新\n" >> release.txt
           echo -e "- 🔄 如有变动则自动触发同步推送\n" >> release.txt
@@ -69,7 +67,7 @@ jobs:
         uses: ncipollo/release-action@main
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
-          artifacts: "${{ matrix.arch }}-${{ matrix.sdk }}.zip"
+          artifacts: "${{ matrix.arch }}-${{ matrix.tag }}.zip"
           allowUpdates: true
           replacesArtifacts: true
           bodyFile: "release.txt"
