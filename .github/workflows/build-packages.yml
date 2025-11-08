@@ -35,7 +35,7 @@ jobs:
           sed -i 's/$(BPF_DEPENDS)//g' daed/Makefile || true
           
       - name: Build
-        uses: kenzok8/gh-action-sdk@main
+        uses: QuickWrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
