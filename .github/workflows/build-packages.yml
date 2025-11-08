@@ -5,18 +5,18 @@ on:
 
 jobs:
   build:
-    name: build ${{ matrix.arch }}-${{ matrix.sdk }}
-    runs-on: ubuntu-latest
+    name: Build ${{ matrix.arch }}-${{ matrix.tag }}
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        sdk:
-          - 24.10.4
         arch:
           - aarch64_cortex-a53
           - aarch64_generic
           - x86_64
-
+        tag:
+          - openwrt-24.10
+          
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,12 +27,11 @@ jobs:
           git config --global user.email "OPPEN321@users.noreply.github.com"
           git config --global user.name "actions-user"
           sudo timedatectl set-timezone "Asia/Shanghai"
-          echo "DATE_TAG=R$(date +%d%m%y)" >> $GITHUB_ENV
 
-      - name: Hack daed packages
+      - name: Free disk space
         if: steps.detect.outputs.pkgs != ''
         run: |
-          sed -i 's/$(BPF_DEPENDS)//g' daed/Makefile || true
+          sudo rm -rf /usr/lib/{jvm,llvm} /usr/local /usr/src/* /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm} /usr/libexec/gcc/x86_64-linux-gnu/14 /usr/lib/x86_64-linux-gnu/{*clang*,*LLVM*} /home/linuxbrew
           
       - name: Build
         uses: QuickWrt/gh-action-sdk@main
@@ -42,10 +41,28 @@ jobs:
           PACKAGES: chinadns-ng dns2socks dns2socks-rust dns2tcp geoview hysteria ipt2socks lua-neturl luci-app-homeproxy luci-app-nikki luci-app-openclash luci-app-passwall luci-app-passwall2 luci-app-ssr-plus microsocks naiveproxy nikki pdnsd redsocks2 shadow-tls shadowsocks-libev shadowsocks-rust shadowsocksr-libev simple-obfs sing-box tcping trojan trojan-plus tuic-client v2ray-core v2ray-geodata v2ray-plugin xray-core xray-plugin
           IGNORE_ERRORS: true
 
+      - name: Build Packages
+        if: steps.detect.outputs.pkgs != ''
+        uses: sbwml/openwrt-gh-action-sdk@helloworld
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
+          FEEDNAME: packages_ci
+          PACKAGES: ${{ env.PACKAGES }}
+          KEY_BUILD: ${{ secrets.sign_key }}
+          NO_REFRESH_CHECK: true
+          IGNORE_ERRORS: true
+
+      - name: Upload artifacts
+        if: steps.detect.outputs.pkgs != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.tag }}-${{ matrix.arch }}
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          
       - name: Artifact packages
         uses: actions/upload-artifact@main
         with:
-          name: ${{ matrix.arch }}-${{ matrix.sdk }}
+          name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
           
       - name: Zip packages
