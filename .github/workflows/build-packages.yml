@@ -28,13 +28,18 @@ jobs:
           git config --global user.name "actions-user"
           sudo timedatectl set-timezone "Asia/Shanghai"
           echo "DATE_TAG=R$(date +%d%m%y)" >> $GITHUB_ENV
-        
+
+      - name: Hack daed packages
+        if: steps.detect.outputs.pkgs != ''
+        run: |
+          sed -i 's/$(BPF_DEPENDS)//g' daed/Makefile || true
+          
       - name: Build
         uses: kenzok8/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
-          PACKAGES: luci-app-quickstart quickstart
+          PACKAGES: chinadns-ng daed dns2socks dns2socks-rust dns2tcp geoview hysteria ipt2socks lua-neturl luci-app-daed luci-app-homeproxy luci-app-nikki luci-app-openclash luci-app-passwall luci-app-passwall2 luci-app-ssr-plus microsocks naiveproxy nikki pdnsd redsocks2 shadow-tls shadowsocks-libev shadowsocks-rust shadowsocksr-libev simple-obfs sing-box tcping trojan trojan-plus tuic-client v2ray-core v2ray-geodata v2ray-plugin xray-core xray-plugin
           IGNORE_ERRORS: true
 
       - name: Artifact packages
@@ -55,8 +60,8 @@ jobs:
         uses: ncipollo/release-action@main
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
-          artifacts: "${{ matrix.arch }}-${{ matrix.sdk }}.zip,bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"
+          artifacts: "${{ matrix.arch }}-${{ matrix.sdk }}.zip"
           allowUpdates: true
           replacesArtifacts: true
           bodyFile: "release.txt"
-          tag: ${{ env.DATE_TAG }}-${{ matrix.arch }}
+          tag: ${{ matrix.arch }}
