@@ -86,6 +86,7 @@ jobs:
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
           
       - name: Zip packages
+        if: steps.detect.outputs.pkgs != ''
         run: |
           zip -j ${{ matrix.arch }}-${{ matrix.tag }}.zip bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
           echo -e "## 📅 更新计划\n" > release.txt
@@ -94,6 +95,7 @@ jobs:
           echo -e "- 📬 保持与上游仓库的版本一致性\n" >> release.txt
 
       - name: Upload packages
+        if: steps.detect.outputs.pkgs != ''
         uses: ncipollo/release-action@main
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -104,6 +106,7 @@ jobs:
           tag: ${{ matrix.arch }}
           
       - name: Upload FTP
+        if: steps.detect.outputs.pkgs != '' 
         uses: sbwml/FTP-Deploy-Action@master
         with:
           server: ${{ secrets.ftp_address }}
@@ -114,6 +117,7 @@ jobs:
           dangerous-clean-slate: false
 
       - name: Create metadata
+        if: steps.detect.outputs.pkgs != ''
         run: |
           sshpass -p ${{ secrets.server_password }} ssh -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} >/dev/null 2>&1
           sshpass -p ${{ secrets.server_password }} ssh root@${{ secrets.ftp_address }} "/opt/sbin/opkg-sign ${{ matrix.tag }} ${{ matrix.arch }}"
