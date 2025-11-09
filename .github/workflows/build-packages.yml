@@ -119,5 +119,5 @@ jobs:
       - name: Create metadata
         if: steps.detect.outputs.pkgs != ''
         run: |
-          sshpass -p ${{ secrets.server_password }} ssh -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} >/dev/null 2>&1
-          sshpass -p ${{ secrets.server_password }} ssh root@${{ secrets.ftp_address }} "/opt/sbin/opkg-sign ${{ matrix.tag }} ${{ matrix.arch }}"
+          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "echo ok"
+          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "bash kmod-sign /home/zhao/opkg/openwrt-24.10/aarch64_cortex-a53"
