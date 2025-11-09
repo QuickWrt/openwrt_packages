@@ -72,3 +72,18 @@ jobs:
           replacesArtifacts: true
           bodyFile: "release.txt"
           tag: ${{ matrix.arch }}
+          
+      - name: Upload FTP
+        uses: sbwml/FTP-Deploy-Action@master
+        with:
+          server: ${{ secrets.ftp_address }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: ${{ matrix.tag }}/${{ matrix.arch }}/
+          local-dir: bin/packages/${{ matrix.arch }}/packages_ci/
+          dangerous-clean-slate: false
+
+      - name: Create metadata
+        run: |
+          sshpass -p ${{ secrets.server_password }} ssh -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} >/dev/null 2>&1
+          sshpass -p ${{ secrets.server_password }} ssh root@${{ secrets.ftp_address }} "/opt/sbin/opkg-sign ${{ matrix.tag }} ${{ matrix.arch }}"
