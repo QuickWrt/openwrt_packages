@@ -30,6 +30,7 @@ git clone --depth 1 -b main https://github.com/timsaya/openwrt-bandix bandix && 
 git clone --depth 1 -b openwrt-24.10 https://github.com/QuickWrt/default-settings
 git clone --depth 1 -b main https://github.com/sbwml/luci-app-quickfile openwrt-quickfile && mv -n openwrt-quickfile/{luci-app-quickfile,quickfile} ./ && rm -rf openwrt-quickfile
 git clone --depth 1 -b openwrt-24.10 https://github.com/sbwml/luci-app-webdav
+git clone --depth 1 -b master https://github.com/eamonxg/luci-theme-aurora
 git clone --depth 1 -b main https://github.com/sbwml/luci-app-airconnect openwrt-airconnect && mv -n openwrt-airconnect/{airconnect,luci-app-airconnect} ./ && rm -rf openwrt-airconnect
 git clone --depth 1 -b main https://github.com/sbwml/package_new_ftp
 git clone --depth 1 -b js https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
