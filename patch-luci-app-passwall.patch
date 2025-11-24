@@ -1,5 +1,5 @@
 diff --git a/luci-app-passwall/Makefile b/luci-app-passwall/Makefile
-index 31b3edb..e9aecde 100644
+index bf0de6f..087e05b 100644
 --- a/luci-app-passwall/Makefile
 +++ b/luci-app-passwall/Makefile
 @@ -69,7 +69,7 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
@@ -24,7 +24,7 @@ index 9d5edc7..d825e87 100644
  s = m:section(TypedSection, "global", translate("ACLs"), "<font color='red'>" .. translate("ACLs is a tools which used to designate specific IP proxy mode.") .. "</font>")
  s.anonymous = true
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/acl_config.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/acl_config.lua
-index 50f5c36..0a27fb6 100644
+index 4dfd6d7..07970ce 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/acl_config.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/acl_config.lua
 @@ -2,11 +2,9 @@ local api = require "luci.passwall.api"
@@ -53,7 +53,7 @@ index b39d6df..d105b3f 100644
  -- [[ App Settings ]]--
  s = m:section(TypedSection, "global_app", translate("App Update"),
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/global.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/global.lua
-index bcb8b47..1f1f468 100644
+index 0306f01..86081f9 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/global.lua
 @@ -9,7 +9,6 @@ local has_chnlist = fs.access("/usr/share/passwall/rules/chnlist")
@@ -63,8 +63,8 @@ index bcb8b47..1f1f468 100644
 -api.set_apply_on_parse(m)
  
  local nodes_table = {}
- for k, e in ipairs(api.get_valid_nodes()) do
-@@ -487,6 +486,12 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+ for _, e in ipairs(api.get_valid_nodes()) do
+@@ -486,6 +485,12 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -77,7 +77,7 @@ index bcb8b47..1f1f468 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -577,7 +582,7 @@ if api.is_finded("smartdns") then
+@@ -581,7 +586,7 @@ if api.is_finded("smartdns") then
  end
  
  o = s:taboption("DNS", Flag, "dns_redirect", translate("DNS Redirect"), translate("Force special DNS server to need proxy devices."))
@@ -85,7 +85,7 @@ index bcb8b47..1f1f468 100644
 +o.default = "0"
  o.rmempty = false
  
- if (m:get("@global_forwarding[0]", "use_nft") or "0") == "1" then
+ local use_nft = m:get("@global_forwarding[0]", "use_nft") == "1"
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/haproxy.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/haproxy.lua
 index 8be9f27..4c6b3f2 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/haproxy.lua
@@ -99,7 +99,7 @@ index 8be9f27..4c6b3f2 100644
  -- [[ Haproxy Settings ]]--
  s = m:section(TypedSection, "global_haproxy", translate("Basic Settings"))
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_config.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_config.lua
-index f2ced5f..4d713e6 100644
+index f384eec..deec72c 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_config.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_config.lua
 @@ -2,11 +2,10 @@ local api = require "luci.passwall.api"
@@ -129,7 +129,7 @@ index 58348cb..8311476 100644
  -- [[ Other Settings ]]--
  s = m:section(TypedSection, "global_other")
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index e7157ec..a2d3694 100644
+index 65f7adc..56b7a08 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -46,6 +46,10 @@ end
@@ -179,7 +179,7 @@ index e7157ec..a2d3694 100644
  	luci.http.redirect(e.extedit:format(id))
  end
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe_config.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
-index 445902d..7d6edd2 100644
+index 184789d..bfa2b3a 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
 @@ -9,19 +9,6 @@ if not arg[1] or not m:get(arg[1]) then
@@ -212,7 +212,7 @@ index 445902d..7d6edd2 100644
 +
  o = s:option(Value, "remark", translate("Subscribe Remark"))
  o.rmempty = false
- 
+ o.validate = function(self, value, section)
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/other.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/other.lua
 index 3862bab..621884e 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/other.lua
@@ -226,7 +226,7 @@ index 3862bab..621884e 100644
  -- [[ Delay Settings ]]--
  s = m:section(TypedSection, "global_delay", translate("Delay Settings"))
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/rule.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/rule.lua
-index 433ed33..a75c505 100644
+index 3cc0ca8..b9efcdc 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/rule.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/rule.lua
 @@ -4,8 +4,6 @@ local has_xray = api.finded_com("xray")
@@ -251,7 +251,7 @@ index 6d4631f..2738beb 100644
  function clean_text(text)
  	local nbsp = string.char(0xC2, 0xA0) -- 不间断空格（U+00A0）
 diff --git a/luci-app-passwall/luasrc/model/cbi/passwall/client/shunt_rules.lua b/luci-app-passwall/luasrc/model/cbi/passwall/client/shunt_rules.lua
-index 715bcf3..8555754 100644
+index db14415..608f41f 100644
 --- a/luci-app-passwall/luasrc/model/cbi/passwall/client/shunt_rules.lua
 +++ b/luci-app-passwall/luasrc/model/cbi/passwall/client/shunt_rules.lua
 @@ -4,7 +4,6 @@ local datatypes = api.datatypes
@@ -308,7 +308,7 @@ index a42a0ac..6affd2c 100644
  s = m:section(NamedSection, arg[1], "user", "")
  s.addremove = false
 diff --git a/luci-app-passwall/luasrc/passwall/api.lua b/luci-app-passwall/luasrc/passwall/api.lua
-index 6b30d38..802d92f 100644
+index 2e06645..b8c4cd3 100644
 --- a/luci-app-passwall/luasrc/passwall/api.lua
 +++ b/luci-app-passwall/luasrc/passwall/api.lua
 @@ -38,72 +38,6 @@ function is_old_uci()
@@ -432,10 +432,10 @@ index eb5527e..133c295 100644
  		cursor: pointer;
  	}
 diff --git a/luci-app-passwall/po/zh-cn/passwall.po b/luci-app-passwall/po/zh-cn/passwall.po
-index 0112384..4ee45fa 100644
+index 8e9fefa..5469b5a 100644
 --- a/luci-app-passwall/po/zh-cn/passwall.po
 +++ b/luci-app-passwall/po/zh-cn/passwall.po
-@@ -1864,9 +1864,6 @@ msgstr "是否要恢复客户端默认配置？"
+@@ -1885,9 +1885,6 @@ msgstr "是否要恢复客户端默认配置？"
  msgid "Are you sure you want to restore the client to default settings?"
  msgstr "是否真的要恢复客户端默认配置？"
  
@@ -446,7 +446,7 @@ index 0112384..4ee45fa 100644
  msgstr "URLTest"
  
 diff --git a/luci-app-passwall/root/usr/share/passwall/0_default_config b/luci-app-passwall/root/usr/share/passwall/0_default_config
-index 6ca00d0..527406c 100644
+index f730442..97d8a2a 100644
 --- a/luci-app-passwall/root/usr/share/passwall/0_default_config
 +++ b/luci-app-passwall/root/usr/share/passwall/0_default_config
 @@ -32,7 +32,7 @@ config global_haproxy
