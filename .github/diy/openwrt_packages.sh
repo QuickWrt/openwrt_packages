@@ -22,7 +22,7 @@ git clone --depth 1 -b master https://github.com/sbwml/luci-app-qbittorrent open
 git clone --depth 1 -b openwrt-24.10 https://github.com/sbwml/autocore-arm
 git clone --depth 1 -b main https://github.com/sbwml/openwrt_pkgs && mv -n openwrt_pkgs/{bash-completion,ddns-scripts-aliyun,luci-app-cpufreq,luci-app-ramfree,fw_download_tool,luci-app-socat,luci-app-ota,luci-app-usb-printer,luci-app-wolplus,luci-app-netspeedtest,speedtest-cli} ./ && rm -rf openwrt_pkgs
 git clone --depth 1 -b master https://github.com/sirpdboy/luci-theme-kucat
-git clone --depth 1 -b main https://github.com/sirpdboy/luci-app-kucat-config
+git clone --depth 1 -b master https://github.com/sirpdboy/luci-app-kucat-config
 git clone --depth 1 -b main https://github.com/sirpdboy/luci-app-partexp openwrt-partexp && mv -n openwrt-partexp/luci-app-partexp ./ && rm -rf openwrt-partexp
 git clone --depth 1 -b openwrt-24.10 https://github.com/QuickWrt/luci-theme-argon openwrt-argon && mv -n openwrt-argon/{luci-app-argon-config,luci-theme-argon} ./ && rm -rf openwrt-argon
 git clone --depth 1 -b main https://github.com/timsaya/luci-app-bandix openwrt-bandix && mv -n openwrt-bandix/luci-app-bandix ./ && rm -rf openwrt-bandix
