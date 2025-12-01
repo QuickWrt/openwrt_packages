@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=Aurora Theme (A modern browser theme built with Vite and Tailwind CSS)
 LUCI_DEPENDS:=+luci-base
 
-PKG_VERSION:=0.8.7s_beta
+PKG_VERSION:=0.8.7_beta
 PKG_RELEASE:=20251130
 PKG_LICENSE:=Apache-2.0
 
