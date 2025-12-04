@@ -1,0 +1,80 @@
+name: Build Openwrt Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}-${{ matrix.tag }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - aarch64_cortex-a53
+          - aarch64_generic
+          - x86_64
+        tag:
+          - openwrt-24.10
+          
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Hack daed packages
+        run: |
+          sed -i 's/$(BPF_DEPENDS)//g' daed/Makefile || true
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/lib/{jvm,llvm} /usr/local /usr/src/* /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm} /usr/libexec/gcc/x86_64-linux-gnu/14 /usr/lib/x86_64-linux-gnu/{*clang*,*LLVM*} /home/linuxbrew
+
+      - name: Build Packages
+        uses: sbwml/openwrt-gh-action-sdk@helloworld
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
+          FEEDNAME: packages_ci
+          PACKAGES: chinadns-ng daed dns2socks dns2socks-rust dns2tcp geoview hysteria ipt2socks lua-neturl luci-app-daed luci-app-homeproxy luci-app-nikki luci-app-openclash luci-app-passwall luci-app-passwall2 luci-app-ssr-plus microsocks naiveproxy nikki pdnsd redsocks2 shadow-tls shadowsocks-libev shadowsocks-rust shadowsocksr-libev simple-obfs sing-box tcping trojan trojan-plus tuic-client v2ray-core v2ray-geodata v2ray-plugin xray-core xray-plugin
+          KEY_BUILD: ${{ secrets.sign_key }}
+          NO_REFRESH_CHECK: true
+          IGNORE_ERRORS: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.tag }}-${{ matrix.arch }}
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          
+      - name: Zip packages
+        run: |
+          zip -j ${{ matrix.arch }}-${{ matrix.tag }}.zip bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          echo -e "## 📅 更新计划\n" > release.txt
+          echo -e "- 🕒 每日自动检测上游更新\n" >> release.txt
+          echo -e "- 🔄 如有变动则自动触发同步推送\n" >> release.txt
+          echo -e "- 📬 保持与上游仓库的版本一致性\n" >> release.txt
+
+      - name: Upload packages
+        uses: ncipollo/release-action@main
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          artifacts: "${{ matrix.arch }}-${{ matrix.tag }}.zip"
+          allowUpdates: true
+          replacesArtifacts: true
+          bodyFile: "release.txt"
+          tag: ${{ matrix.arch }}
+          
+      - name: Upload FTP
+        uses: sbwml/FTP-Deploy-Action@master
+        with:
+          server: ${{ secrets.ftp_address }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: opkg/${{ matrix.tag }}/${{ matrix.arch }}/
+          local-dir: bin/packages/${{ matrix.arch }}/packages_ci/
+          dangerous-clean-slate: true
+
+      - name: Create metadata
+        run: |
+          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "echo ok"
+          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "bash kmod-sign /home/zhao/opkg/${{ matrix.tag }}/${{ matrix.arch }}"
