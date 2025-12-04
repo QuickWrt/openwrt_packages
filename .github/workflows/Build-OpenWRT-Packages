@@ -61,7 +61,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           bodyFile: "release.txt"
-          tag: ${{ matrix.arch }}
+          tag: ${{ matrix.arch }}-packages
           
       - name: Upload FTP
         uses: sbwml/FTP-Deploy-Action@master
@@ -69,11 +69,11 @@ jobs:
           server: ${{ secrets.ftp_address }}
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
-          server-dir: opkg/${{ matrix.tag }}/${{ matrix.arch }}/
+          server-dir: opkg/openwrt-packages/${{ matrix.arch }}/
           local-dir: bin/packages/${{ matrix.arch }}/packages_ci/
           dangerous-clean-slate: true
 
       - name: Create metadata
         run: |
           sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "echo ok"
-          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "bash kmod-sign /home/zhao/opkg/${{ matrix.tag }}/${{ matrix.arch }}"
+          sshpass -p ${{ secrets.server_password }} ssh -p 6466 -o StrictHostKeyChecking=no root@${{ secrets.ftp_address }} "bash kmod-sign /home/zhao/opkg/openwrt-packages/${{ matrix.arch }}"
