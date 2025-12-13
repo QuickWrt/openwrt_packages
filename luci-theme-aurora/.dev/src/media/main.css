@@ -1177,7 +1177,7 @@
         }
 
         & .cbi-tooltip-container {
-          @apply static flex cursor-help items-center justify-center text-slate-800 dark:text-slate-200;
+          @apply static inline-flex cursor-help items-center justify-center text-slate-800 dark:text-slate-200;
 
           & .cbi-tooltip {
             @apply bottom-0 md:left-0;
